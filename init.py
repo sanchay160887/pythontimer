@@ -3,65 +3,48 @@ import sys
 import time
 from PIL import Image
 from PIL import ImageGrab 
+from email.MIMEText import MIMEText
 import time
-
-
-def captureScreen():
-    #time.sleep(1)
-    timestr = time.strftime("%Y%m%d-%H%M%S")
-    ImageGrab.grab().save(timestr+'.jpg', "JPEG")
-
-def update_timeText():
-    if (state):
-        global timer
-
-        timer[3] += 1
-        
-        
-        if (timer[3] >= 100):
-            captureScreen()
-            timer[3] = 0
-            timer[2] += 1
-        
-        if (timer[2] >= 60):
-            timer[1] += 1
-            timer[2] = 0
-
-        if(timer[1]>=60):
-            timer[0] += 1
-            timer[1] = 0
-            captureScreen()
-        
-        timeString = pattern.format(timer[0], timer[1], timer[2], timer[3])
-        
-        timeText.configure(text=timeString)
-        
-    root.after(10, update_timeText)
-
-
-def start():
-    global state
-    state = True
-
-
-def pause():
-    global state
-    state = False
-
-
-def reset():
-    global timer
-    timer = [0, 0, 0, 0]
-    timeText.configure(text='00:00:00:00')
-
-
-def exist():
-    root.destroy()
-
-
+global state 
 state = False
 
 root = tk.Tk()
+root.mainloop()
+
+def captureScreen():
+    #time.sleep(1)
+    timestr = time.strftime("%Y%m%d-%H%M%S");
+    ImageGrab.grab().save(timestr+'.jpg', "JPEG");
+	
+
+def update_timeText():
+	print "CAlLED"
+    while(state):
+		print time.time() ;
+		time.sleep(1);
+		# timeString = pattern.format(timer[0], timer[1], timer[2], timer[3])
+		# timeText.configure(text=timeString)
+		captureScreen();
+		
+		root.after(1, update_timeText)
+
+def start():
+    state = True;
+
+
+def pause():
+	state = False;
+
+
+def reset():
+    timer = [0, 0, 0, 0];
+    timeText.configure(text='00:00:00:00');
+
+
+def exist():
+    root.destroy();
+
+
 root.wm_title('Tracker Tool')
 
 
@@ -85,5 +68,3 @@ resetButton.pack()
 quitButton = tk.Button(root, text='Quit', command=exist)
 quitButton.pack()
 
-update_timeText()
-root.mainloop()
